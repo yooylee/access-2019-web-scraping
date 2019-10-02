@@ -1,0 +1,70 @@
+---
+title: "Exercise 2 Answer"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Exercise 1: Canadian National Digital Heritage Index Multiple Pages
+
+### 1. Install and load R packages
+
+```{r pressure, echo=FALSE}
+# Install (You can install vai RStudio GUI too)
+
+#install.packages("Rcrawler") ## version 0.1.9-1
+#install.packages("data.table") ## version 1.12.2
+
+# Load
+#library(Rcrawler) ## R package for web scraping
+#library(data.table)
+```
+
+### 2. Set the parameters and extract elements
+```{r pressure, echo=FALSE}
+# URL list
+
+x<-1:5
+urllist <- lapply(x, function(x){
+  index_url <-paste("https://www.cndhi-ipnpc.ca/en?&page=",x,"/",sep='');
+  return(index_url)
+})
+
+# Extract elements from the url using Xpath for title, institution, keywords
+DATA_index_multiple<-ContentScraper(Url = urllist,
+XpathPatterns=c("//div[@class='collection--title']/a/text()","//div[@class='collection--institution']/p", "//div[@class='collection-keywords']"), PatternsName=c("title", "institution", "keywords"), ManyPerPattern=TRUE)
+
+# Return a list
+DATA_index_multiple
+```
+
+### 3. Convert the list to DataFrame
+```{r pressure, echo=FALSE}
+
+# Convert the list to DF
+df_index_multiple <- rbindlist(DATA_index_multiple)
+df_index_multiple
+```
+
+### 4. Save as CSV
+```{r pressure, echo=FALSE}
+
+# Save as CSV
+write.csv(df_index_multiple, "index_multiple.csv")
+
+# You can find index.csv file in the Files panel.
+```

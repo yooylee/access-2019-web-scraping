@@ -1,0 +1,76 @@
+---
+title: "Exercise 3 Answer"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Exercise 3: Board Games
+
+### 1. Install and load R packages
+
+```{r pressure, echo=FALSE}
+# Install (You can install vai RStudio GUI too)
+
+#install.packages("Rcrawler") ## version 0.1.9-1
+#install.packages("data.table") ## version 1.12.2
+
+# Load
+library(Rcrawler) ## R package for web scraping
+library(data.table)
+```
+
+### 2. Set the parameters and extract elements
+```{r pressure, echo=FALSE}
+# URL
+url="https://boardgamegeek.com/browse/boardgame"
+
+# Extract elements from the url using Xpath for rank, title, year, and rating
+DATA_board<-ContentScraper(Url = url,
+XpathPatterns=c("//*[@id='row_']/td[1]", "//td[@class='collection_objectname 
+						']/div[2]/a", "//td[@class='collection_objectname 
+						']/div[2]/span", "//tr[@id='row_']/td[4]"), PatternsName=c("rank", "title", "year", "rating"), ManyPerPattern=TRUE)
+
+# Return a list
+DATA_board
+```
+
+### 3. Convert the list to DataFrame
+```{r pressure, echo=FALSE}
+
+# Convert the list to DF
+df_board <- rbindlist(list(DATA_board))
+df_board
+```
+
+```{r pressure, echo=FALSE}
+# Remove () in the year
+df_board$year <- gsub("\\(", "", df_board$year)
+df_board$year <- gsub("\\)", "", df_board$year)
+
+df_board
+```
+
+
+### 4. Save as CSV
+```{r pressure, echo=FALSE}
+
+# Save as CSV
+write.csv(df_board, "board.csv")
+
+# You can find index.csv file in the Files panel.
+```

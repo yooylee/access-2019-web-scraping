@@ -1,0 +1,71 @@
+---
+title: "Exercise 4 Answer"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Exercise 4: Code4Lib Jobs
+
+### 1. Install and load R packages
+
+```{r pressure, echo=FALSE}
+# Install (You can install vai RStudio GUI too)
+
+#install.packages("Rcrawler") ## version 0.1.9-1
+#install.packages("data.table") ## version 1.12.2
+
+# Load
+library(Rcrawler) ## R package for web scraping
+library(data.table)
+```
+
+### 2. Set the parameters and extract elements
+```{r pressure, echo=FALSE}
+# URL list
+### Find url pattern for page 1, page 2, page 3, page 4, and page 5
+x<-1:5
+urllist <- lapply(x, function(x){
+  index_url <-paste("https://jobs.code4lib.org/jobs?page=",x,"/",sep='');
+  return(index_url)
+})
+
+
+# Extract elements from the url using Xpath for for title, organization, status
+DATA_jobs<-ContentScraper(Url = urllist,
+XpathPatterns=c("//a[@class='stretched-link']/text()", "//div[@class='card-subtitle w-75']", "//div[@class='card-body position-relative']/div/div/a"), PatternsName=c("title", "organization","status"), ManyPerPattern=TRUE)
+
+# Return a list
+DATA_jobs
+```
+
+### 3. Convert the list to DataFrame
+```{r pressure, echo=FALSE}
+
+# Convert the list to DF
+df_jobs <- rbindlist(DATA_jobs)
+df_jobs
+```
+
+### 4. Save as CSV
+```{r pressure, echo=FALSE}
+
+# Save as CSV
+write.csv(df_jobs, "jobs.csv")
+
+# You can find index.csv file in the Files panel.
+```

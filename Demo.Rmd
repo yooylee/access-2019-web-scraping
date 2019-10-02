@@ -1,0 +1,112 @@
+---
+title: "Demo"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Demonstration 1
+
+All examples in this document came from <https://cran.r-project.org/web/packages/Rcrawler/Rcrawler.pdf>.
+
+### 1. Install and load R packages
+
+```{r pressure, echo=FALSE}
+# Install (You can install vai RStudio GUI too)
+
+#install.packages("Rcrawler") ## version 0.1.9-1
+
+# Load
+library(Rcrawler) ## R package for web scraping
+```
+
+### 2. Set the parameters and extract elements
+```{r pressure, echo=FALSE}
+# URL
+url="http://glofile.com/index.php/2017/06/08/taux-nette-detente/"
+
+# Extract elements from the url using Xpath
+DATA<-ContentScraper(Url = url,
+XpathPatterns=c("//head/title","//*/article"),PatternsName=c("title", "article"))
+
+# Return a list with two elements (title and article)
+DATA
+```
+
+### 3. Convert the list to DataFrame
+```{r pressure, echo=FALSE}
+
+# Convert the list to DF
+df <- as.data.frame(DATA)
+```
+
+### 4. Save as CSV
+```{r pressure, echo=FALSE}
+
+# Save as CSV
+write.csv(df, "demo.csv")
+
+# You can find demo.csv file in the Files panel.
+```
+
+## Demonstration 2
+
+All examples in this document came from <https://cran.r-project.org/web/packages/Rcrawler/Rcrawler.pdf>.
+
+### 1. Install and load R packages
+
+```{r pressure, echo=FALSE}
+# Install (You can install vai RStudio GUI too)
+
+#install.packages("Rcrawler") ## version 0.1.9-1
+#install.packages("data.table") ## version 1.12.2
+
+# Load
+# library(Rcrawler) ## R package for web scraping
+library(data.table)
+```
+
+### 2. Set the parameters and extract elements
+```{r pressure, echo=FALSE}
+# URL
+urllist<-c("http://glofile.com/index.php/2017/06/08/cyril-hanouna-tire-a-boulets-rouges-sur-le-csa/","http://glofile.com/index.php/2017/06/08/placements-quelles-solutions-pour-doper/","http://glofile.com/index.php/2017/06/08/paris-un-concentre-de-suspens/")
+
+# Extract elements from the url using Xpath
+DATA_multiple<-ContentScraper(Url = urllist,
+XpathPatterns=c("//head/title","//*/article"),PatternsName=c("title", "article"))
+
+# Return a list with two elements (title and article)
+DATA_multiple
+```
+
+### 3. Convert the list to DataFrame
+```{r pressure, echo=FALSE}
+
+# Convert the list to DF
+df_multiple <- data.frame(do.call("rbind", DATA_multiple))
+
+```
+
+
+### 4. Save as CSV
+```{r pressure, echo=FALSE}
+
+# Save as CSV
+write.csv(df_multiple, "demo_1.csv")
+
+# You can find demo_1.csv file in the Files panel.
+```
